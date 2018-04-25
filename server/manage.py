@@ -3,15 +3,13 @@
 import unittest
 
 from flask_script import Manager
-from flask_migrate import MigrateCommand
+from flask_cors import CORS
 
 from app import create_app, db
-# from project.api.models import Results
+from app.api.models import Test
 
 app = create_app()
 manager = Manager(app)
-
-manager.add_command('db', MigrateCommand)
 
 @manager.command
 def recreate_db():
@@ -23,10 +21,8 @@ def recreate_db():
 @manager.command
 def seed_db():
     """Seeds the database."""
-    db.session.add(User(
-        username='michael',
-        email='michael@realpython.com',
-        password='test'
+    db.session.add(Test(
+        name='test',
     ))
     db.session.commit()
 
