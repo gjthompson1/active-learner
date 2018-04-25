@@ -1,4 +1,4 @@
-# project/api/search.py
+# app/api/search.py
 import sys
 from flask import Blueprint, jsonify, request, make_response, render_template
 from sqlalchemy import exc

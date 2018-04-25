@@ -1,4 +1,4 @@
-# project/api/models.py
+# app/api/models.py
 import datetime
 
 from flask import current_app

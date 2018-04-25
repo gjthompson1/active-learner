@@ -1,4 +1,4 @@
-# project/config.py
+# app/config.py
 
 import os
 
@@ -19,10 +19,10 @@ class StagingConfig(BaseConfig):
     """Staging configuration"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    ELASTICSEARCH_HOST = 'elastic:changeme@{}:9200'.format(os.environ.get('REACT_APP_ELASTICSEARCH_IP'))
+    ELASTICSEARCH_HOST = 'elastic:changeme@localhost:9200'
 
 class ProductionConfig(BaseConfig):
     """Production configuration"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    ELASTICSEARCH_HOST = 'elastic:changeme@{}:9200'.format(os.environ.get('REACT_APP_ELASTICSEARCH_IP'))
+    ELASTICSEARCH_HOST = 'elastic:changeme@localhost:9200'
