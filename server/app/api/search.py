@@ -8,6 +8,9 @@ from app import db
 
 search_blueprint = Blueprint('search', __name__, template_folder='./templates')
 
-@search_blueprint.route('/search/ping', methods=['GET'])
-def get_job_count():
-    return jsonify({'ping':'pong!'})
+@search_blueprint.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify({
+        'status': 'success',
+        'message': 'pong!!'
+    })

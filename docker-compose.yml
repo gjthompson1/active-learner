@@ -8,7 +8,7 @@ services:
       context: './db'
       dockerfile: Dockerfile
     ports:
-      - 5435:5432  # expose ports - HOST:CONTAINER
+      - 5436:5432  # expose ports - HOST:CONTAINER
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -21,15 +21,12 @@ services:
       context: './server'
       dockerfile: Dockerfile
     volumes:
-      - ./services/server:/usr/src/app:cached
+      - ./server:/usr/src/app:cached
     ports:
       - 5000:5000 # expose ports - HOST:CONTAINER
     environment:
-      - APP_SETTINGS=project.config.DevelopmentConfig
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/users_dev
-      - DATABASE_TEST_URL=postgres://postgres:postgres@db:5432/users_test
-      - REACT_APP_ELASTICSEARCH_IP=${REACT_APP_ELASTICSEARCH_IP}
-      - SECRET_KEY=my_precious
+      - APP_SETTINGS=app.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/active_learner
     depends_on:
       - db
       - elasticsearch
@@ -40,17 +37,17 @@ services:
   client:
     container_name: al_client
     build:
-      context: './services/client'
+      context: './client'
       dockerfile: Dockerfile
     volumes:
-      - ./services/client:/usr/src/app:cached
-      # - './services/client/node_modules:/usr/src/app/node_modules'
-      - '/usr/src/app/node_modules'
+      - ./client:/usr/src/app:cached
+      - './client/node_modules:/usr/src/app/node_modules'
+      # - '/usr/src/app/node_modules'
     ports:
-      - '3007:3000' # expose ports - HOST:CONTAINER
+      - '3006:3000' # expose ports - HOST:CONTAINER
     environment:
       - NODE_ENV=development
-      - REACT_APP_USERS_SERVICE_URL=${REACT_APP_SERVER_SERVICE_URL}
+      - REACT_APP_USERS_SERVICE_URL=http://localhost:5000
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - server
@@ -62,8 +59,8 @@ services:
     build:
       context: './services/server/app/es'
     volumes:
-      - ./services/server/project/es/esdata:/usr/share/elasticsearch/data:cached
-      - ./services/server/project/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:cached
+      - ./server/project/es/esdata:/usr/share/elasticsearch/data:cached
+      - ./server/project/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:cached
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
