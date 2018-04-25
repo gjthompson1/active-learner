@@ -41,7 +41,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./client:/usr/src/app:cached
-      - './client/node_modules:/usr/src/app/node_modules'
+      # - './client/node_modules:/usr/src/app/node_modules'
       # - '/usr/src/app/node_modules'
     ports:
       - '3006:3000' # expose ports - HOST:CONTAINER
@@ -57,10 +57,10 @@ services:
   elasticsearch:
     container_name: al_elasticsearch
     build:
-      context: './services/server/app/es'
+      context: './elasticsearch'
     volumes:
-      - ./server/project/es/esdata:/usr/share/elasticsearch/data:cached
-      - ./server/project/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:cached
+      - ./elasticsearch/esdata:/usr/share/elasticsearch/data:cached
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:cached
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
