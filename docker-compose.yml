@@ -1,0 +1,70 @@
+version: '3.3'
+
+services:
+
+  db:
+    container_name: al_db
+    build:
+      context: './db'
+      dockerfile: Dockerfile
+    ports:
+      - 5435:5432  # expose ports - HOST:CONTAINER
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: exit 0
+
+  server:
+    container_name: al_server
+    build:
+      context: './server'
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/server:/usr/src/app:cached
+    ports:
+      - 5000:5000 # expose ports - HOST:CONTAINER
+    environment:
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/users_dev
+      - DATABASE_TEST_URL=postgres://postgres:postgres@db:5432/users_test
+      - REACT_APP_ELASTICSEARCH_IP=${REACT_APP_ELASTICSEARCH_IP}
+      - SECRET_KEY=my_precious
+    depends_on:
+      - db
+      - elasticsearch
+    links:
+      - db
+      - elasticsearch
+
+  client:
+    container_name: al_client
+    build:
+      context: './services/client'
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/client:/usr/src/app:cached
+      # - './services/client/node_modules:/usr/src/app/node_modules'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '3007:3000' # expose ports - HOST:CONTAINER
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_USERS_SERVICE_URL=${REACT_APP_SERVER_SERVICE_URL}
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - server
+    links:
+      - server
+
+  elasticsearch:
+    container_name: al_elasticsearch
+    build:
+      context: './services/server/app/es'
+    volumes:
+      - ./services/server/project/es/esdata:/usr/share/elasticsearch/data:cached
+      - ./services/server/project/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:cached
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
