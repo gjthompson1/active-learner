@@ -26,6 +26,10 @@ def convert_numbers(val):
             res = None
     return res
 
+def date_to_year(val):
+
+    return res
+
 def _build_index_structure(index_name, type_name, data, _id):
     d = {
         '_index': index_name,
@@ -35,10 +39,25 @@ def _build_index_structure(index_name, type_name, data, _id):
             'imdb_id': convert_strings(data.get('imdb_id')),
             'title': convert_strings(data.get('title')),
             'genres': convert_strings(data.get('genres')),
+            'overview': convert_strings(data.get('overview')),
+            'status': convert_strings(data.get('status')),
+            'spoken_languages': convert_strings(data.get('release_date')),
+            'release_date': convert_strings(data.get('release_date')),
+
             'vote_average': convert_numbers(data.get('vote_average')),
             'vote_count': convert_numbers(data.get('vote_count')),
             'revenue': convert_numbers(data.get('revenue')),
             'runtime': convert_numbers(data.get('runtime')),
+            'budget': convert_numbers(data.get('budget')),
+            'popularity': convert_numbers(data.get('popularity')),
+            'release_year': date_to_year(data.get('release_date')),
+            'spoken_languages_number': convert_numbers(data.get('spoken_languages_number')),
+            'production_countries_number': convert_numbers(data.get('production_countries_number')),
+
+            'original_language': convert_strings(data.get('original_language')),
+            'original_title': convert_strings(data.get('original_title')),
+            'production_companies': convert_strings(data.get('production_companies')),
+            'tagline': convert_strings(data.get('tagline')),
         }
     }
     return d

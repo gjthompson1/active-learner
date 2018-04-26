@@ -19,7 +19,7 @@ const SearchResults = props => {
   if (hits.length !== 0) {
     return (
       <div>
-        { hits.map((row,idx) => (
+        { hits.map((hit,idx) => (
           <div className="searchItem" key={idx}>
             <article className="media">
               <figure className="media-left">
@@ -27,30 +27,58 @@ const SearchResults = props => {
                   <img src="https://bulma.io/images/placeholders/128x128.png"/>
                 </p>
               </figure>
-              <div className="media-content">
+              <div className="media-content noOverflow">
                 <div className="content">
                   <p>
-                    <strong>{row.title}</strong>
+                    <strong>{hit.title}</strong>
                     <br/>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.
                   </p>
                 </div>
-                <nav className="level is-mobile">
-                  <div className="level-left">
-                    <a className="level-item">
-                      <span className="icon is-small"><i className="fas fa-reply"></i></span>
-                    </a>
-                    <a className="level-item">
-                      <span className="icon is-small"><i className="fas fa-retweet"></i></span>
-                    </a>
-                    <a className="level-item">
-                      <span className="icon is-small"><i className="fas fa-heart"></i></span>
-                    </a>
+                <div className="content">
+                  <div className="columns">
+                    <div className="column">
+                      <div className="content is-small">
+                        <p>
+                          <span>
+                            Genres: {hit.genres}<br/>
+                          </span>
+                          { hit.genres !== null &&
+                            <span>
+                              Genres: {hit.genres}<br/>
+                            </span>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    <div className="column">
+                      <div className="content is-small">
+                        <p>
+                          <span>
+                            Genres: {hit.genres}<br/>
+                          </span>
+                          { hit.genres !== null &&
+                            <span>
+                              Genres: {hit.genres}<br/>
+                            </span>
+                          }
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </nav>
+                </div>
               </div>
               <div className="media-right">
-                <button className="delete"></button>
+                <div className="level-left">
+                  <a className="level-item">
+                    <span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>
+                    {/* <span className="icon is-small"><i className="fas fa-thumbs-up fa-2x"></i></span> */}
+                  </a>
+                  <a className="level-item">
+                    <span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>
+                    {/* <span className="icon is-small"><i className="fas fa-thumbs-down fa-2x"></i></span> */}
+                  </a>
+                </div>
               </div>
             </article>
           </div>

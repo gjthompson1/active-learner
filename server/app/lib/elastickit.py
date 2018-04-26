@@ -26,8 +26,30 @@ def clean_hits(hits):
     for hit in hits:
         row = {}
         row['id'] = hit['_id']
-        row['title'] = hit['_source']['title']
-        row['genres'] = hit['_source']['genres']
+
+        row['imdb_id'] = hit['_source'].get('imdb_id')
+        row['title'] = hit['_source'].get('title')
+        row['genres'] = hit['_source'].get('genres')
+        row['overview'] = hit['_source'].get('overview')
+        row['status'] = hit['_source'].get('status')
+        row['spoken_languages'] = hit['_source'].get('release_date')
+        row['release_date'] = hit['_source'].get('release_date')
+
+        row['vote_average'] = hit['_source'].get('vote_average')
+        row['vote_count'] = hit['_source'].get('vote_count')
+        row['revenue'] = hit['_source'].get('revenue')
+        row['runtime'] = hit['_source'].get('runtime')
+        row['budget'] = hit['_source'].get('budget')
+        row['popularity'] = hit['_source'].get('popularity')
+        row['release_year'] = hit['_source'].get('release_date')
+        row['spoken_languages_number'] = hit['_source'].get('spoken_languages_number')
+        row['production_countries_number'] = hit['_source'].get('production_countries_number')
+
+        row['original_language'] = hit['_source'].get('original_language')
+        row['original_title'] = hit['_source'].get('original_title')
+        row['production_companies'] = hit['_source'].get('production_companies')
+        row['tagline'] = hit['_source'].get('tagline')
+        
         out.append(row)
     return out
 

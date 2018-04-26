@@ -81,7 +81,7 @@ class App extends Component {
                 onClick={(e) => this.handleSearchClick(e)}
                 className="button is-primary"
               >
-                Button
+                Search
               </a>
             </div>
           </div>
