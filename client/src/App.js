@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 import logo from './learning.svg';
 import './App.css';
+import SearchResults from './components/searchResults'
 import axios from 'axios';
 
 // import 'bulma/css/bulma.css'
@@ -12,17 +13,26 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      query: '',
+      query: 'Lord of the Ring',
       res: [],
     }
   }
 
   componentDidMount() {
-    console.log('mounted');
-    console.log(process.env.REACT_APP_SERVER_URL);
+    this.executeSearch();
   }
 
   handleSearchClick = (event) => {
+    this.executeSearch();
+  }
+
+  handleKeyPress = (event) => {
+    if ( event.key === 'Enter' ) {
+      this.executeSearch();
+    }
+  }
+
+  executeSearch = () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/search/basic`
     let data = {
       'query': this.state.query,
@@ -40,17 +50,6 @@ class App extends Component {
     })
   }
 
-  // handleSearchClick = (event) => {
-  //   const url = `${process.env.REACT_APP_SERVER_URL}/search/index_count`
-  //   axios.get(url)
-  //   .then((res) => {
-  //     console.log(res);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   })
-  // }
-
   handleSearchChange = (event) => {
     const obj = this.state;
     obj[event.target.name] = event.target.value;
@@ -65,10 +64,11 @@ class App extends Component {
           <h1 className="App-title">Active Learner</h1>
         </header>
         <div className="section has-text-centered">
-          <div class="field has-addons">
-            <div class="control">
+          <div className="field has-addons">
+            <div className="control">
               <input
                 onChange={(e) => this.handleSearchChange(e)}
+                onKeyPress={this.handleKeyPress.bind(this)}
                 className="input is-primary"
                 type="text"
                 name="query"
@@ -76,16 +76,19 @@ class App extends Component {
                 placeholder="Search"
               />
             </div>
-            <div class="control">
-              <a onClick={(e) => this.handleSearchClick(e)} className="button is-primary" >Button</a>
+            <div className="control">
+              <a
+                onClick={(e) => this.handleSearchClick(e)}
+                className="button is-primary"
+              >
+                Button
+              </a>
             </div>
           </div>
+          <SearchResults
+            hits={this.state.res}
+          />
         </div>
-        { this.state.res.map((row,idx) => (
-          <div>
-            {row.title}
-          </div>
-        ))}
       </div>
     );
   }
