@@ -22,3 +22,12 @@ def index_count():
     res = elastickit.get_job_count()
     print(res, file=sys.stderr)
     return jsonify(res)
+
+@search_blueprint.route('/search/basic', methods=['POST'])
+def basic_search():
+    post_data = request.get_json()
+    query = post_data.get('query')
+    print(post_data, file=sys.stderr)
+    res = elastickit.basic_search(query, [], 0)
+    print(res, file=sys.stderr)
+    return jsonify(res)
