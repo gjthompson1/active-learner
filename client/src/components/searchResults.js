@@ -6,6 +6,8 @@ const SearchResults = props => {
 
   const {
     hits,
+    handleThumbsDown,
+    handleThumbsUp
   } = props;
 
   // formatLogoString(_string) {
@@ -96,11 +98,11 @@ const SearchResults = props => {
               </div>
               <div className="media-right">
                 <div className="level-left">
-                  <a className="level-item">
+                  <a className="level-item" onClick={() => handleThumbsUp(hit)}>
                     <span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>
                     {/* <span className="icon is-small"><i className="fas fa-thumbs-up fa-2x"></i></span> */}
                   </a>
-                  <a className="level-item">
+                  <a className="level-item" onClick={() => handleThumbsDown(hit)}>
                     <span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>
                     {/* <span className="icon is-small"><i className="fas fa-thumbs-down fa-2x"></i></span> */}
                   </a>

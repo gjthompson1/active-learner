@@ -5,6 +5,7 @@ from sqlalchemy import exc
 
 from app import db
 from app.lib import elastickit
+from app.lib import mlkit
 
 search_blueprint = Blueprint('search', __name__, template_folder='./templates')
 
@@ -31,3 +32,10 @@ def basic_search():
     res = elastickit.basic_search(query, [], 0)
     print(res, file=sys.stderr)
     return jsonify(res)
+
+@search_blueprint.route('/search/train', methods=['POST'])
+def train_model():
+    post_data = request.get_json()
+    print(post_data, file=sys.stderr)
+
+    return jsonify({})

@@ -15,6 +15,8 @@ class App extends Component {
     this.state = {
       query: 'Lord of the Ring',
       res: [],
+      thumbUps: [],
+      thumbDowns: [],
     }
   }
 
@@ -56,6 +58,43 @@ class App extends Component {
     this.setState(obj);
   }
 
+  handleThumbsDown = (hit) => {
+    const thumbDowns = this.state.thumbDowns;
+    thumbDowns.push(hit);
+    this.setState({
+      thumbDowns: thumbDowns
+    })
+    console.log(this.state);
+    this.trainModel();
+  }
+
+  handleThumbsUp = (hit) => {
+    const thumbUps = this.state.thumbUps;
+    thumbUps.push(hit);
+    this.setState({
+      thumbUps: thumbUps
+    })
+    this.trainModel();
+  }
+
+  trainModel = () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/search/train`
+    let data = {
+      'thumbUps': this.state.thumbUps,
+      'thumbDowns': this.state.thumbDowns,
+    };
+    axios.post(url, data)
+    .then((res) => {
+      console.log(res);
+      // this.setState({
+      //   'res':res.data.results
+      // })
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -91,9 +130,15 @@ class App extends Component {
           </div>
         </section>
 
+        <section>
+          {/* {JSON.stringify(this.state.thumbUps)} */}
+        </section>
+
         <div className="section has-text-centered">
           <SearchResults
             hits={this.state.res}
+            handleThumbsUp={this.handleThumbsUp}
+            handleThumbsDown={this.handleThumbsDown}
           />
         </div>
       </div>
