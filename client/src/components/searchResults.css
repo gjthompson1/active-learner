@@ -1,5 +1,7 @@
 .searchItem {
   margin-bottom: 20px;
+  border: 1px solid gainsboro;
+  padding: 20px;
 }
 
 .noOverflow {

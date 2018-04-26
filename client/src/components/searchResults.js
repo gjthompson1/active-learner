@@ -32,36 +32,62 @@ const SearchResults = props => {
                   <p>
                     <strong>{hit.title}</strong>
                     <br/>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.
+                    {hit.overview}
                   </p>
                 </div>
                 <div className="content">
                   <div className="columns">
                     <div className="column">
-                      <div className="content is-small">
+                      <div className="content">
                         <p>
                           <span>
-                            Genres: {hit.genres}<br/>
+                            <strong>Status</strong>: {hit.status}<br/>
                           </span>
-                          { hit.genres !== null &&
-                            <span>
-                              Genres: {hit.genres}<br/>
-                            </span>
-                          }
+                          <span>
+                            <strong>Release Date</strong>: {hit.release_date}<br/>
+                          </span>
+                          <span>
+                            <strong>Genres</strong>: {hit.genres}<br/>
+                          </span>
+                          <span>
+                            <strong>Spoken Languages</strong>: {hit.spoken_languages}<br/>
+                          </span>
                         </p>
                       </div>
                     </div>
                     <div className="column">
-                      <div className="content is-small">
+                      <div className="content">
                         <p>
                           <span>
-                            Genres: {hit.genres}<br/>
+                            <strong>Vote Average</strong>: {hit.vote_average}<br/>
                           </span>
-                          { hit.genres !== null &&
-                            <span>
-                              Genres: {hit.genres}<br/>
-                            </span>
-                          }
+                          <span>
+                            <strong>Vote Count</strong>: {hit.vote_count}<br/>
+                          </span>
+                          <span>
+                            <strong>Revenue</strong>: {hit.revenue}<br/>
+                          </span>
+                          <span>
+                            <strong>Budget</strong>: {hit.budget}<br/>
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="column">
+                      <div className="content">
+                        <p>
+                          <span>
+                            <strong>Popularity</strong>: {hit.popularity}<br/>
+                          </span>
+                          <span>
+                            <strong>Release Year</strong>: {hit.release_year}<br/>
+                          </span>
+                          <span>
+                            <strong>Spoken Languages Number</strong>: {hit.spoken_languages_number}<br/>
+                          </span>
+                          <span>
+                            <strong>Production Companies Number</strong>: {hit.production_countries_number}<br/>
+                          </span>
                         </p>
                       </div>
                     </div>
