@@ -23,13 +23,13 @@ const SearchResults = props => {
       <div>
         { hits.map((hit,idx) => (
           <div className="searchItem" key={idx}>
-            <article className="media">
-              <figure className="media-left">
-                <p className="image is-64x64">
+            <div className="columns">
+              <figure className="column">
+                <p className="image is-128x128">
                   <img src="https://bulma.io/images/placeholders/128x128.png"/>
                 </p>
               </figure>
-              <div className="media-content noOverflow">
+              <div className="column is-9 has-text-left">
                 <div className="content">
                   <p>
                     <strong>{hit.title}</strong>
@@ -96,19 +96,27 @@ const SearchResults = props => {
                   </div>
                 </div>
               </div>
-              <div className="media-right">
-                <div className="level-left">
-                  <a className="level-item" onClick={() => handleThumbsUp(hit)}>
-                    <span className="icon is-small"><i className="fas fa-thumbs-up"></i></span>
-                    {/* <span className="icon is-small"><i className="fas fa-thumbs-up fa-2x"></i></span> */}
-                  </a>
-                  <a className="level-item" onClick={() => handleThumbsDown(hit)}>
-                    <span className="icon is-small"><i className="fas fa-thumbs-down"></i></span>
-                    {/* <span className="icon is-small"><i className="fas fa-thumbs-down fa-2x"></i></span> */}
-                  </a>
+              <div className="column">
+                <div class="tile is-ancestor">
+                  <div class="tile is-vertical is-parent">
+                    <div class="tile is-child">
+                      <p class="title">
+                        <a onClick={() => handleThumbsUp(hit)}>
+                          <span className="icon is-small thumbsUp"><i className="fas fa-thumbs-up fa-2x"></i></span>
+                        </a>
+                      </p>
+                    </div>
+                    <div class="tile is-child">
+                      <p class="title">
+                        <a onClick={() => handleThumbsDown(hit)}>
+                          <span className="icon is-small thumbsDown"><i className="fas fa-thumbs-down fa-2x"></i></span>
+                        </a>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </article>
+            </div>
           </div>
         ))}
       </div>

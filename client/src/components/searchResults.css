@@ -7,3 +7,23 @@
 .noOverflow {
   overflow: hidden !important;
 }
+
+.thumbsUp {
+  margin-top: 18px;
+  color: #4bbf73;
+  opacity: 0.8;
+}
+
+.thumbsDown {
+  margin-top: 18px;
+  color: #d74945;
+  opacity: 0.8;
+}
+
+.thumbsDown:hover {
+  opacity: 1;
+}
+
+.thumbsUp:hover {
+  opacity: 1;
+}
