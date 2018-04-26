@@ -73,3 +73,5 @@ data = df.to_dict('records')
 
 _robust_index(es, data)
 es.indices.put_settings(index=index_name,body= {"index" : {"max_result_window" : 5000}})
+
+# es.indices.delete(index=index_name)
