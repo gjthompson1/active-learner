@@ -26,8 +26,8 @@ def clean_hits(hits):
     for hit in hits:
         row = {}
         row['id'] = hit['_id']
-        row['job_title'] = hit['_source']['title']
-        row['link'] = hit['_source']['genres']
+        row['title'] = hit['_source']['title']
+        row['genres'] = hit['_source']['genres']
         out.append(row)
     return out
 

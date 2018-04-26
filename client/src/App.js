@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
+import logo from './learning.svg';
 import './App.css';
 import axios from 'axios';
 
@@ -12,7 +13,7 @@ class App extends Component {
     super()
     this.state = {
       query: '',
-      res: '',
+      res: [],
     }
   }
 
@@ -31,7 +32,7 @@ class App extends Component {
     .then((res) => {
       console.log(res);
       this.setState({
-        'res':res
+        'res':res.data.results
       })
     })
     .catch((err) => {
@@ -80,6 +81,11 @@ class App extends Component {
             </div>
           </div>
         </div>
+        { this.state.res.map((row,idx) => (
+          <div>
+            {row.title}
+          </div>
+        ))}
       </div>
     );
   }
