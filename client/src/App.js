@@ -59,32 +59,39 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Active Learner</h1>
-        </header>
-        <div className="section has-text-centered">
-          <div className="field has-addons">
-            <div className="control">
-              <input
-                onChange={(e) => this.handleSearchChange(e)}
-                onKeyPress={this.handleKeyPress.bind(this)}
-                className="input is-primary"
-                type="text"
-                name="query"
-                value={this.state.query}
-                placeholder="Search"
-              />
-            </div>
-            <div className="control">
-              <a
-                onClick={(e) => this.handleSearchClick(e)}
-                className="button is-primary"
-              >
-                Search
-              </a>
+        <section class="hero is-primary has-text-centered">
+          <div class="hero-body">
+            <div class="container">
+              <img src={logo} className="App-logo" alt="logo" />
+              <h1 class="title">
+                Active Learner
+              </h1>
+              <div className="field has-addons is-grouped is-grouped-centered">
+                <div className="control searchBox">
+                  <input
+                    onChange={(e) => this.handleSearchChange(e)}
+                    onKeyPress={this.handleKeyPress.bind(this)}
+                    className="input is-info"
+                    type="text"
+                    name="query"
+                    value={this.state.query}
+                    placeholder="Search"
+                  />
+                </div>
+                <div className="control">
+                  <a
+                    onClick={(e) => this.handleSearchClick(e)}
+                    className="button is-info"
+                  >
+                    Search
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
+
+        <div className="section has-text-centered">
           <SearchResults
             hits={this.state.res}
           />

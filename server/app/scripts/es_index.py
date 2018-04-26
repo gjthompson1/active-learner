@@ -2,6 +2,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
 import pandas as pd
+import re
 
 ELASTICSEARCH_HOST = 'elastic:changeme@localhost:9200'
 es = Elasticsearch([ELASTICSEARCH_HOST], verify_certs=True)
@@ -27,8 +28,14 @@ def convert_numbers(val):
     return res
 
 def date_to_year(val):
-
-    return res
+    if re.search('(18|19|20)',str(val)) != None:
+        res = str(val).split('/')[-1]
+        if len(res)==4:
+            return res
+        else:
+            return None
+    else:
+        return None
 
 def _build_index_structure(index_name, type_name, data, _id):
     d = {
@@ -50,7 +57,7 @@ def _build_index_structure(index_name, type_name, data, _id):
             'runtime': convert_numbers(data.get('runtime')),
             'budget': convert_numbers(data.get('budget')),
             'popularity': convert_numbers(data.get('popularity')),
-            'release_year': date_to_year(data.get('release_date')),
+            'release_year': convert_numbers(date_to_year(data.get('release_date'))),
             'spoken_languages_number': convert_numbers(data.get('spoken_languages_number')),
             'production_countries_number': convert_numbers(data.get('production_countries_number')),
 
@@ -93,12 +100,12 @@ es.indices.put_settings(index=index_name,body= {"index" : {"max_result_window" :
 
 # es.indices.delete(index=index_name)
 
-types = []
-i = 0
-for row in data:
-    i+=1
-    print(i, end='\r')
-    if str(row['genres']) not in [None,'nan','']:
-        types = types + row['genres'].split('|')
-
-pd.Series(types).value_counts()
+# types = []
+# i = 0
+# for row in data:
+#     i+=1
+#     print(i, end='\r')
+#     if str(row['genres']) not in [None,'nan','']:
+#         types = types + row['genres'].split('|')
+#
+# pd.Series(types).value_counts()
