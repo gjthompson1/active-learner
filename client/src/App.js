@@ -17,6 +17,7 @@ class App extends Component {
       res: [],
       thumbUps: [],
       thumbDowns: [],
+      modelParameters: {},
     }
   }
 
@@ -86,9 +87,9 @@ class App extends Component {
     axios.post(url, data)
     .then((res) => {
       console.log(res);
-      // this.setState({
-      //   'res':res.data.results
-      // })
+      this.setState({
+        'modelParameters':res.data
+      })
     })
     .catch((err) => {
       console.log(err);
@@ -131,7 +132,7 @@ class App extends Component {
         </section>
 
         <section>
-          {/* {JSON.stringify(this.state.thumbUps)} */}
+          {JSON.stringify(this.state.modelParameters)}
         </section>
 
         <div className="section has-text-centered">

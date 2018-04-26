@@ -41,7 +41,7 @@ def clean_hits(hits):
         row['runtime'] = hit['_source'].get('runtime')
         row['budget'] = hit['_source'].get('budget')
         row['popularity'] = hit['_source'].get('popularity')
-        row['release_year'] = hit['_source'].get('release_date')
+        row['release_year'] = hit['_source'].get('release_year')
         row['spoken_languages_number'] = hit['_source'].get('spoken_languages_number')
         row['production_countries_number'] = hit['_source'].get('production_countries_number')
 
@@ -49,7 +49,7 @@ def clean_hits(hits):
         row['original_title'] = hit['_source'].get('original_title')
         row['production_companies'] = hit['_source'].get('production_companies')
         row['tagline'] = hit['_source'].get('tagline')
-        
+
         out.append(row)
     return out
 

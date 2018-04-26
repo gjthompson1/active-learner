@@ -36,6 +36,10 @@ def basic_search():
 @search_blueprint.route('/search/train', methods=['POST'])
 def train_model():
     post_data = request.get_json()
-    print(post_data, file=sys.stderr)
-
-    return jsonify({})
+    goods = post_data.get('thumbUps')
+    bads = post_data.get('thumbDowns')
+    if len(goods)>1 and len(bads)>1:
+        res = mlkit.train_model(goods,bads)
+    else:
+        res = {}
+    return jsonify(res)
