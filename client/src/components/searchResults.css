@@ -8,6 +8,11 @@
   overflow: hidden !important;
 }
 
+.actionColumn {
+  display: flex !important;
+  align-items: center !important;
+}
+
 .thumbsUp {
   margin-top: 18px;
   color: #4bbf73;

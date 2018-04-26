@@ -96,9 +96,14 @@ const SearchResults = props => {
                   </div>
                 </div>
               </div>
-              <div className="column">
+              <div className="column actionColumn">
                 <div class="tile is-ancestor">
                   <div class="tile is-vertical is-parent">
+                    <div class="tile is-child">
+                      <p class="title">
+                        {Math.round((100 - hit.score * 100) * 100) / 100}
+                      </p>
+                    </div>
                     <div class="tile is-child">
                       <p class="title">
                         <a onClick={() => handleThumbsUp(hit)}>

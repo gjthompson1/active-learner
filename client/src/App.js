@@ -17,7 +17,7 @@ class App extends Component {
       res: [],
       thumbUps: [],
       thumbDowns: [],
-      modelParameters: {},
+      logitParams: {},
     }
   }
 
@@ -38,6 +38,7 @@ class App extends Component {
   executeSearch = () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/search/basic`
     let data = {
+      'query': this.state.query,
       'query': this.state.query,
     };
     // this.setState({'isSearchLoading':true})
@@ -67,6 +68,7 @@ class App extends Component {
     })
     console.log(this.state);
     this.trainModel();
+    this.executeSearch();
   }
 
   handleThumbsUp = (hit) => {
@@ -76,6 +78,7 @@ class App extends Component {
       thumbUps: thumbUps
     })
     this.trainModel();
+    this.executeSearch();
   }
 
   trainModel = () => {
@@ -88,7 +91,7 @@ class App extends Component {
     .then((res) => {
       console.log(res);
       this.setState({
-        'modelParameters':res.data
+        'logitParams':res.data
       })
     })
     .catch((err) => {
@@ -132,7 +135,7 @@ class App extends Component {
         </section>
 
         <section>
-          {JSON.stringify(this.state.modelParameters)}
+          {JSON.stringify(this.state.logitParams)}
         </section>
 
         <div className="section has-text-centered">

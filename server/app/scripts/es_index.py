@@ -1,8 +1,14 @@
+import sys
+sys.path.append('..')
+
+import re
+import pandas as pd
+
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+from sklearn.preprocessing import StandardScaler
 
-import pandas as pd
-import re
+from lib.mlkit import MODEL_COLUMNS
 
 ELASTICSEARCH_HOST = 'elastic:changeme@localhost:9200'
 es = Elasticsearch([ELASTICSEARCH_HOST], verify_certs=True)
@@ -11,7 +17,7 @@ es.info()
 index_name = 'movie_index'
 type_name = 'movie_doc'
 
-CHUNK_SIZE = 10000
+CHUNK_SIZE = 1000
 MAX_CHUNK_BYTES = 10000000
 
 def convert_strings(val):
@@ -37,35 +43,40 @@ def date_to_year(val):
     else:
         return None
 
-def _build_index_structure(index_name, type_name, data, _id):
+def clean_row(row):
+    d = {
+    'imdb_id': convert_strings(row.get('imdb_id')),
+    'title': convert_strings(row.get('title')),
+    'genres': convert_strings(row.get('genres')),
+    'overview': convert_strings(row.get('overview')),
+    'status': convert_strings(row.get('status')),
+    'spoken_languages': convert_strings(row.get('release_date')),
+    'release_date': convert_strings(row.get('release_date')),
+
+    'vote_average': convert_numbers(row.get('vote_average')),
+    'vote_count': convert_numbers(row.get('vote_count')),
+    'revenue': convert_numbers(row.get('revenue')),
+    'runtime': convert_numbers(row.get('runtime')),
+    'budget': convert_numbers(row.get('budget')),
+    'popularity': convert_numbers(row.get('popularity')),
+    'release_year': convert_numbers(date_to_year(row.get('release_date'))),
+    'spoken_languages_number': convert_numbers(row.get('spoken_languages_number')),
+    'production_countries_number': convert_numbers(row.get('production_countries_number')),
+
+    'original_language': convert_strings(row.get('original_language')),
+    'original_title': convert_strings(row.get('original_title')),
+    'production_companies': convert_strings(row.get('production_companies')),
+    'tagline': convert_strings(row.get('tagline')),
+    }
+    return d
+
+
+def _build_index_structure(index_name, type_name, row, _id):
     d = {
         '_index': index_name,
         '_type': type_name,
         '_id': str(_id),
-        '_source': {
-            'imdb_id': convert_strings(data.get('imdb_id')),
-            'title': convert_strings(data.get('title')),
-            'genres': convert_strings(data.get('genres')),
-            'overview': convert_strings(data.get('overview')),
-            'status': convert_strings(data.get('status')),
-            'spoken_languages': convert_strings(data.get('release_date')),
-            'release_date': convert_strings(data.get('release_date')),
-
-            'vote_average': convert_numbers(data.get('vote_average')),
-            'vote_count': convert_numbers(data.get('vote_count')),
-            'revenue': convert_numbers(data.get('revenue')),
-            'runtime': convert_numbers(data.get('runtime')),
-            'budget': convert_numbers(data.get('budget')),
-            'popularity': convert_numbers(data.get('popularity')),
-            'release_year': convert_numbers(date_to_year(data.get('release_date'))),
-            'spoken_languages_number': convert_numbers(data.get('spoken_languages_number')),
-            'production_countries_number': convert_numbers(data.get('production_countries_number')),
-
-            'original_language': convert_strings(data.get('original_language')),
-            'original_title': convert_strings(data.get('original_title')),
-            'production_companies': convert_strings(data.get('production_companies')),
-            'tagline': convert_strings(data.get('tagline')),
-        }
+        '_source': row
     }
     return d
 
@@ -94,8 +105,23 @@ def _robust_index(es, data):
 
 df = pd.read_csv('data/AllMoviesDetailsCleaned.csv',delimiter=';')
 data = df.to_dict('records')
+data = [clean_row(x) for x in data]
 
-_robust_index(es, data)
+to_scale = pd.DataFrame(data)[MODEL_COLUMNS]
+to_scale = to_scale.apply(lambda x: x.fillna(x.median()),axis=0)
+
+scaler = StandardScaler()
+ans = scaler.fit_transform(to_scale)
+scaled_df = pd.DataFrame(ans)
+scaled_df.columns = ['scaled_{}'.format(x) for x in MODEL_COLUMNS]
+
+data_df = pd.DataFrame(data)
+
+master = pd.concat([data_df, scaled_df], axis=1)
+master = master.fillna('')
+master = master.to_dict('records')
+
+_robust_index(es, master)
 es.indices.put_settings(index=index_name,body= {"index" : {"max_result_window" : 5000}})
 
 # es.indices.delete(index=index_name)

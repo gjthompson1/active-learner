@@ -50,6 +50,16 @@ def clean_hits(hits):
         row['production_companies'] = hit['_source'].get('production_companies')
         row['tagline'] = hit['_source'].get('tagline')
 
+        row['scaled_vote_average'] = hit['_source'].get('scaled_vote_average')
+        row['scaled_vote_count'] = hit['_source'].get('scaled_vote_count')
+        row['scaled_revenue'] = hit['_source'].get('scaled_revenue')
+        row['scaled_runtime'] = hit['_source'].get('scaled_runtime')
+        row['scaled_budget'] = hit['_source'].get('scaled_budget')
+        row['scaled_popularity'] = hit['_source'].get('scaled_popularity')
+        row['scaled_release_year'] = hit['_source'].get('scaled_release_year')
+        # row['spoken_languages_number'] = hit['_source'].get('spoken_languages_number')
+        # row['production_countries_number'] = hit['_source'].get('production_countries_number')
+
         out.append(row)
     return out
 
@@ -60,7 +70,6 @@ def basic_search(query, search_filters, search_from):
             {'field': 'country.keyword', 'value': 'United States'}
         ]
     '''
-    print(query, file=sys.stderr)
 
     should_terms = [
         {
@@ -96,7 +105,6 @@ def basic_search(query, search_filters, search_from):
         # }
     }
 
-    print(bdy, file=sys.stderr)
     ans = es.search(index=index_name, doc_type=type_name ,body=bdy, size=10)
     # print(ans, file=sys.stderr)
     hits = ans.get('hits',{}).get('hits',{})
@@ -106,6 +114,85 @@ def basic_search(query, search_filters, search_from):
     results['took'] = took
     results['results'] = clean_hits(hits)
     results['num_results'] = ans.get('hits',{}).get('total','')
-    print(results, file=sys.stderr)
+    # results['aggs'] = ans.get('aggregations',{})
+    return results
+
+def function_query(query, search_filters, search_from, logit_params):
+    '''
+        search_from=0
+        search_filters=[
+            {'field': 'country.keyword', 'value': 'United States'}
+        ]
+    '''
+
+    should_terms = [
+        {
+            "multi_match": {
+                "query": "{}".format(query),
+                "fields": ['title','genres'],
+            }
+        }
+    ]
+
+    search_filters_clean = [{'term':{x['field']:x['value']}} for x in search_filters]
+
+    if search_filters_clean == []:
+        must_terms = [{"bool": {"should": should_terms}}]
+    else:
+        must_terms = search_filters_clean + [{"bool": {"should": should_terms}}]
+
+    bdy = {
+        "from" : search_from,
+        "size" : 10,
+        "query": {
+            "function_score": {
+                "query": {
+                    "bool": {
+                        "must": must_terms
+                    }
+                },
+                "script_score": {
+                    "script": {
+                    "lang": "expression",
+                    "source": '''
+                        _score/10 + 1/(1+ exp(-(
+                        intercept +
+                        doc['scaled_vote_average'].value*scaled_vote_average +
+                        doc['scaled_vote_count'].value*scaled_vote_count +
+                        doc['scaled_revenue'].value*scaled_revenue +
+                        doc['scaled_runtime'].value*scaled_runtime +
+                        doc['scaled_budget'].value*scaled_budget +
+                        doc['scaled_popularity'].value*scaled_popularity +
+                        doc['scaled_release_year'].value*scaled_release_year
+                        )))
+                    ''',
+                    "params": {
+                        "intercept": logit_params.get('intercept'),
+                        "scaled_vote_average": logit_params.get('coef',{}).get('scaled_vote_average'),
+                        "scaled_vote_count": logit_params.get('coef',{}).get('scaled_vote_count'),
+                        "scaled_revenue": logit_params.get('coef',{}).get('scaled_revenue'),
+                        "scaled_runtime": logit_params.get('coef',{}).get('scaled_runtime'),
+                        "scaled_budget": logit_params.get('coef',{}).get('scaled_budget'),
+                        "scaled_popularity": logit_params.get('coef',{}).get('scaled_popularity'),
+                        "scaled_release_year": logit_params.get('coef',{}).get('scaled_release_year'),
+                    }
+                    # "source": "doc['release_year'].value"
+                  }
+                }
+            }
+        }
+    }
+
+    # _score/10 + 1/(1+ exp(-(doc['release_year'].value*a)))
+
+    ans = es.search(index=index_name, doc_type=type_name ,body=bdy, size=10)
+    # print(ans, file=sys.stderr)
+    hits = ans.get('hits',{}).get('hits',{})
+
+    took = ans.get('took','')
+    results = {}
+    results['took'] = took
+    results['results'] = clean_hits(hits)
+    results['num_results'] = ans.get('hits',{}).get('total','')
     # results['aggs'] = ans.get('aggregations',{})
     return results

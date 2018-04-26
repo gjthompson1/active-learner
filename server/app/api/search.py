@@ -12,7 +12,6 @@ search_blueprint = Blueprint('search', __name__, template_folder='./templates')
 @search_blueprint.route('/ping', methods=['POST'])
 def ping_pong():
     post_data = request.get_json()
-    print(post_data, file=sys.stderr)
     return jsonify({
         'status': 'success',
         'message': 'pong!!'
@@ -21,16 +20,19 @@ def ping_pong():
 @search_blueprint.route('/search/index_count', methods=['GET'])
 def index_count():
     res = elastickit.get_job_count()
-    print(res, file=sys.stderr)
     return jsonify(res)
 
 @search_blueprint.route('/search/basic', methods=['POST'])
 def basic_search():
     post_data = request.get_json()
     query = post_data.get('query')
+    logit_params = post_data.get('logit_params')
     print(post_data, file=sys.stderr)
-    res = elastickit.basic_search(query, [], 0)
-    print(res, file=sys.stderr)
+    if logit_params == {}:
+        res = elastickit.basic_search(query, [], 0)
+    else:
+        res = elastickit.function_query(query, [], 0, logit_params)
+    res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/train', methods=['POST'])
