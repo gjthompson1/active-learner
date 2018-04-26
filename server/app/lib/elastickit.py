@@ -23,9 +23,11 @@ def get_job_count():
 
 def clean_hits(hits):
     out = []
+    # print(hits, file=sys.stderr)
     for hit in hits:
         row = {}
         row['id'] = hit['_id']
+        row['score'] = hit['_score']
 
         row['imdb_id'] = hit['_source'].get('imdb_id')
         row['title'] = hit['_source'].get('title')
@@ -129,7 +131,7 @@ def function_query(query, search_filters, search_from, logit_params):
         {
             "multi_match": {
                 "query": "{}".format(query),
-                "fields": ['title','genres'],
+                "fields": ['title','genres','overview'],
             }
         }
     ]
@@ -141,6 +143,7 @@ def function_query(query, search_filters, search_from, logit_params):
     else:
         must_terms = search_filters_clean + [{"bool": {"should": should_terms}}]
 
+    # _score/10000 +
     bdy = {
         "from" : search_from,
         "size" : 10,
@@ -155,15 +158,15 @@ def function_query(query, search_filters, search_from, logit_params):
                     "script": {
                     "lang": "expression",
                     "source": '''
-                        _score/10 + 1/(1+ exp(-(
-                        intercept +
-                        doc['scaled_vote_average'].value*scaled_vote_average +
-                        doc['scaled_vote_count'].value*scaled_vote_count +
-                        doc['scaled_revenue'].value*scaled_revenue +
-                        doc['scaled_runtime'].value*scaled_runtime +
-                        doc['scaled_budget'].value*scaled_budget +
-                        doc['scaled_popularity'].value*scaled_popularity +
-                        doc['scaled_release_year'].value*scaled_release_year
+                        1/(1+ exp(-(
+                            intercept +
+                            doc['scaled_vote_average'].value * scaled_vote_average +
+                            doc['scaled_vote_count'].value*scaled_vote_count +
+                            doc['scaled_revenue'].value*scaled_revenue +
+                            doc['scaled_runtime'].value*scaled_runtime +
+                            doc['scaled_budget'].value*scaled_budget +
+                            doc['scaled_popularity'].value*scaled_popularity +
+                            doc['scaled_release_year'].value*scaled_release_year
                         )))
                     ''',
                     "params": {

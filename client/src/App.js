@@ -39,7 +39,7 @@ class App extends Component {
     const url = `${process.env.REACT_APP_SERVER_URL}/search/basic`
     let data = {
       'query': this.state.query,
-      'query': this.state.query,
+      'logit_params': this.state.logitParams,
     };
     // this.setState({'isSearchLoading':true})
     axios.post(url, data)
@@ -135,7 +135,9 @@ class App extends Component {
         </section>
 
         <section>
-          {JSON.stringify(this.state.logitParams)}
+          {JSON.stringify(this.state.thumbUps.length)}<br/>
+          {JSON.stringify(this.state.thumbDowns.length)}<br/>
+          {JSON.stringify(this.state.logitParams)}<br/>
         </section>
 
         <div className="section has-text-centered">

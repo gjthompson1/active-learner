@@ -32,7 +32,8 @@ def basic_search():
         res = elastickit.basic_search(query, [], 0)
     else:
         res = elastickit.function_query(query, [], 0, logit_params)
-    res['results'] = records
+        records = mlkit.score_records(res['results'])
+        res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/train', methods=['POST'])

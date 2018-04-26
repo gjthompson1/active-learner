@@ -101,7 +101,7 @@ const SearchResults = props => {
                   <div class="tile is-vertical is-parent">
                     <div class="tile is-child">
                       <p class="title">
-                        {Math.round((100 - hit.score * 100) * 100) / 100}
+                        {Math.round(hit.score * 1000) / 1000}
                       </p>
                     </div>
                     <div class="tile is-child">
