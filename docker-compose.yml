@@ -41,13 +41,11 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./client:/usr/src/app:cached
-      # - './client/node_modules:/usr/src/app/node_modules'
-      # - '/usr/src/app/node_modules'
     ports:
       - '3006:3000' # expose ports - HOST:CONTAINER
     environment:
       - NODE_ENV=development
-      - REACT_APP_USERS_SERVICE_URL=http://localhost:5000
+      - REACT_APP_SERVER_URL=http://localhost:5000
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - server
