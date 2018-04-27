@@ -53,7 +53,8 @@ def score_records(records):
     if 'coef_' in clf_std.steps[1][1].__dict__:
     # if 'coef_' in clf.__dict__:
         df = pd.DataFrame(records)
-        df = df[MODEL_COLUMNS]
+        # print(df.columns, file=sys.stderr)
+        df = df.reindex(columns=MODEL_COLUMNS)
         # df = df.apply(lambda x: x.fillna(x.mean()),axis=0)
         res1 = clf.predict_proba(df)
         for x, y in zip(records,res1):
