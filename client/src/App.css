@@ -7,6 +7,17 @@
   width: 300px;
 }
 
+.badCoef {
+  background-color: #d74945;
+  color: white;
+}
+
+.goodCoef {
+  background-color: #4bbf73;
+  color: white;
+}
+
+
 /* .container {
   margin: 0px 20px 0px 20px;
 } */

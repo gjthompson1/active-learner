@@ -170,10 +170,6 @@ def function_query(query, search_filters, search_from, logit_params, _type, filt
                             intercept +
                             doc['vote_average'].value * vote_average +
                             doc['vote_count'].value * vote_count +
-                            doc['revenue'].value * revenue +
-                            doc['runtime'].value * runtime +
-                            doc['budget'].value * budget +
-                            doc['popularity'].value * popularity +
                             doc['release_year'].value * release_year
                         )))
                     '''.format('-' if _type == 'worst' else '+'),
@@ -181,10 +177,10 @@ def function_query(query, search_filters, search_from, logit_params, _type, filt
                         "intercept": logit_params.get('intercept'),
                         "vote_average": logit_params.get('coef',{}).get('vote_average'),
                         "vote_count": logit_params.get('coef',{}).get('vote_count'),
-                        "revenue": logit_params.get('coef',{}).get('revenue'),
-                        "runtime": logit_params.get('coef',{}).get('runtime'),
-                        "budget": logit_params.get('coef',{}).get('budget'),
-                        "popularity": logit_params.get('coef',{}).get('popularity'),
+                        "scaled_revenue": logit_params.get('coef',{}).get('scaled_revenue'),
+                        "scaled_runtime": logit_params.get('coef',{}).get('scaled_runtime'),
+                        "scaled_budget": logit_params.get('coef',{}).get('scaled_budget'),
+                        "scaled_popularity": logit_params.get('coef',{}).get('scaled_popularity'),
                         "release_year": logit_params.get('coef',{}).get('release_year'),
                     }
                     # "source": "doc['release_year'].value"
@@ -208,6 +204,12 @@ def function_query(query, search_filters, search_from, logit_params, _type, filt
     # results['aggs'] = ans.get('aggregations',{})
     return results
 
+
+                            # doc['scaled_vote_count'].value * scaled_vote_count +
+                            # doc['scaled_revenue'].value * scaled_revenue +
+                            # doc['scaled_runtime'].value * scaled_runtime +
+                            # doc['scaled_budget'].value * scaled_budget +
+                            # doc['scaled_popularity'].value * scaled_popularity +
 
     # _score/10000 +
     # bdy = {

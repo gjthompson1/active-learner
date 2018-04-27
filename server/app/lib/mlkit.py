@@ -1,23 +1,23 @@
 import sys
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
 
 clf = LogisticRegression()
 
-# clf = Pipeline([
-#     ('vect', StandardScaler()),
-#     ('clf', LogisticRegression())
-#     ])
+clf_std = Pipeline([
+    ('vect', StandardScaler()),
+    ('clf', LogisticRegression())
+    ])
 
 MODEL_COLUMNS = [
     'vote_average',
     'vote_count',
-    'revenue',
-    'runtime',
-    'budget',
-    'popularity',
+    # 'revenue',
+    # 'runtime',
+    # 'budget',
+    # 'popularity',
     'release_year',
 ]
 
@@ -38,6 +38,7 @@ def train_model(goods, bads):
     # df = df.apply(lambda x: x.fillna(x.mean()),axis=0)
     # print(df, file=sys.stderr)
     clf.fit(df[MODEL_COLUMNS], df['is_good'])
+    clf_std.fit(df[MODEL_COLUMNS], df['is_good'])
 
     # [{'importance':x,'variable':y} for x, y in zip(logit_model.steps[1][1].coef_[0],MODEL_COLUMNS)]
     return {
@@ -49,13 +50,17 @@ def train_model(goods, bads):
 
 def score_records(records):
 
-    # if 'coef_' in clf.steps[1][1].__dict__:
-    if 'coef_' in clf.__dict__:
+    if 'coef_' in clf_std.steps[1][1].__dict__:
+    # if 'coef_' in clf.__dict__:
         df = pd.DataFrame(records)
         df = df[MODEL_COLUMNS]
         # df = df.apply(lambda x: x.fillna(x.mean()),axis=0)
-        res = clf.predict_proba(df)
-        for x, y in zip(records,res):
+        res1 = clf.predict_proba(df)
+        for x, y in zip(records,res1):
             x['score_manual'] = y[1]
+
+        res2 = clf_std.predict_proba(df)
+        for x, y in zip(records,res2):
+            x['score_manual_scaled'] = y[1]
 
     return records

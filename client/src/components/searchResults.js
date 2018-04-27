@@ -24,19 +24,26 @@ const SearchResults = props => {
         { hits.map((hit,idx) => (
           <div className="searchItem" key={idx}>
             <div className="columns">
-              <figure className="column">
-                <p className="image is-128x128">
-                  <img src="https://bulma.io/images/placeholders/128x128.png"/>
-                </p>
-              </figure>
-              <div className="column is-9 has-text-left">
+              <figure className="column has-text-left">
                 <div className="content">
                   <p>
-                    <strong>{hit.title}</strong>
-                    <br/>
-                    {/* {hit.overview} */}
-                    {Math.abs(Math.round(hit.score * 1000) / 1000)}
+                    <span>
+                      <strong>PD ES</strong>: {Math.abs(Math.round(hit.score * 1000) / 1000)}<br/>
+                    </span>
+                    <span>
+                      <strong>PD Manual</strong>: {Math.abs(Math.round(hit.score_manual * 1000) / 1000)}<br/>
+                    </span>
+                    <span>
+                      <strong>PD Manual (S)</strong>: {Math.abs(Math.round(hit.score_manual_scaled * 1000) / 1000)}<br/>
+                    </span>
                   </p>
+                </div>
+              </figure>
+              <div className="column is-7 has-text-left">
+                <div className="content">
+                  <h4>
+                    <strong>{hit.title}</strong>
+                  </h4>
                 </div>
                 <div className="content">
                   <div className="columns">
@@ -103,14 +110,14 @@ const SearchResults = props => {
                     <div class="tile is-child">
                       <p class="title">
                         <a onClick={() => handleThumbsUp(hit)}>
-                          <span className="icon is-small thumbsUp"><i className="fas fa-thumbs-up fa-2x"></i></span>
+                          <span className="icon is-small thumbsUp"><i className="far fa-check-circle fa-2x"></i></span>
                         </a>
                       </p>
                     </div>
                     <div class="tile is-child">
                       <p class="title">
                         <a onClick={() => handleThumbsDown(hit)}>
-                          <span className="icon is-small thumbsDown"><i className="fas fa-thumbs-down fa-2x"></i></span>
+                          <span className="icon is-small thumbsDown"><i className="far fa-times-circle fa-2x"></i></span>
                         </a>
                       </p>
                     </div>

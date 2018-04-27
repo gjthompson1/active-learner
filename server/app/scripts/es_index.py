@@ -118,8 +118,16 @@ ans = scaler.fit_transform(to_scale)
 scaled_df = pd.DataFrame(ans)
 scaled_df.columns = ['scaled_{}'.format(x) for x in MODEL_COLUMNS]
 
-master = pd.concat([non_numeric, to_scale, scaled_df], axis=1)
-master = master.fillna('')
+# master = pd.concat([non_numeric, to_scale, scaled_df], axis=1)
+# master = master.fillna('')
+# master = master[master['vote_average'].apply(lambda x: x>0)]
+# master = master[master['vote_count'].apply(lambda x: x>0)]
+# master = master[master['revenue'].apply(lambda x: x>0)]
+# master = master[master['runtime'].apply(lambda x: x>0)]
+# master = master[master['budget'].apply(lambda x: x>0)]
+# master = master[master['popularity'].apply(lambda x: x>0)]
+# master = master[master['release_year'].apply(lambda x: x>0)]
+
 master = master.to_dict('records')
 
 _robust_index(es, master)

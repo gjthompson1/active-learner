@@ -4,6 +4,7 @@ import logo from './learning.svg';
 import './App.css';
 import SearchResults from './components/searchResults'
 import axios from 'axios';
+import _ from 'lodash';
 
 // import 'bulma/css/bulma.css'
 import 'bulmaswatch/lux/bulmaswatch.min.css'
@@ -13,11 +14,13 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      query: 'Lord of the Ring',
+      query: 'Dunkirk',
       res: [],
       thumbUps: [],
       thumbDowns: [],
       logitParams: {},
+      logitParamsClean: [],
+      tabActive:1,
     }
   }
 
@@ -106,6 +109,16 @@ class App extends Component {
       this.setState({
         'logitParams':res.data
       })
+      let logitParamsClean = []
+      for (let val in res.data['coef']){
+        logitParamsClean.push({
+          name: val,
+          val: res.data['coef'][val]
+        })
+      }
+      this.setState({
+        logitParamsClean: logitParamsClean
+      })
     })
     .catch((err) => {
       console.log(err);
@@ -136,6 +149,10 @@ class App extends Component {
       }
 
       return true;
+  }
+
+  handleTabChange = (number) => {
+    this.setState({ tabActive: number})
   }
 
   render() {
@@ -193,18 +210,56 @@ class App extends Component {
           </div>
         </section>
 
-        <section>
-          {JSON.stringify(this.state.thumbUps.length)}<br/>
-          {JSON.stringify(this.state.thumbDowns.length)}<br/>
-          {JSON.stringify(this.state.logitParams)}<br/>
-        </section>
-
         <div className="section has-text-centered">
-          <SearchResults
-            hits={this.state.res}
-            handleThumbsUp={this.handleThumbsUp}
-            handleThumbsDown={this.handleThumbsDown}
-          />
+          <div className="columns">
+            <div className="column">
+              <div class="tabs">
+                <ul>
+                  <li className={this.state.tabActive === 1 ? 'is-active': ''}><a onClick={() => this.handleTabChange(1)}>Good</a></li>
+                  <li className={this.state.tabActive === 2 ? 'is-active': ''}><a onClick={() => this.handleTabChange(2)}>Bad</a></li>
+                  <li className={this.state.tabActive === 3 ? 'is-active': ''}><a onClick={() => this.handleTabChange(3)}>Params</a></li>
+                </ul>
+              </div>
+              { this.state.tabActive === 1 &&
+                <div>
+                  {this.state.thumbUps.map((row,idx) => (
+                    <div>
+                      {row.title}
+                      <hr/>
+                    </div>
+                  ))}
+                </div>
+              }
+              { this.state.tabActive === 2 &&
+                <div>
+                  {this.state.thumbDowns.map((row,idx) => (
+                    <div>
+                      {row.title}
+                      <hr/>
+                    </div>
+                  ))}
+                </div>
+              }
+              { this.state.tabActive === 3 &&
+                <div>
+                  {this.state.logitParamsClean.map((row, idx) => (
+                    <div className={row['val'] >= 0 ? 'goodCoef' : 'badCoef'}>
+                      {row['name']}<br/>
+                      {row['val']}
+                      <hr/>
+                    </div>
+                  ))}
+                </div>
+              }
+            </div>
+            <div className="column is-10">
+              <SearchResults
+                hits={this.state.res}
+                handleThumbsUp={this.handleThumbsUp}
+                handleThumbsDown={this.handleThumbsDown}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

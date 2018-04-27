@@ -32,6 +32,8 @@ def basic_search():
     filter_ids = thumb_ups + thumb_downs
 
     res = elastickit.basic_search(query, [], 0, filter_ids)
+    records = mlkit.score_records(res['results'])
+    res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/worst', methods=['POST'])
@@ -45,8 +47,8 @@ def worst_search():
     # print(post_data, file=sys.stderr)
 
     res = elastickit.function_query(query, [], 0, logit_params, 'worst', filter_ids)
-    # records = mlkit.score_records(res['results'])
-    # res['results'] = records
+    records = mlkit.score_records(res['results'])
+    res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/best', methods=['POST'])
@@ -60,8 +62,8 @@ def best_search():
     # print(post_data, file=sys.stderr)
 
     res = elastickit.function_query(query, [], 0, logit_params, 'best', filter_ids)
-    # records = mlkit.score_records(res['results'])
-    # res['results'] = records
+    records = mlkit.score_records(res['results'])
+    res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/train', methods=['POST'])
@@ -70,7 +72,7 @@ def train_model():
     goods = post_data.get('thumbUps')
     bads = post_data.get('thumbDowns')
     if len(goods)>1 and len(bads)>1:
-        res = mlkit.train_model(goods,bads)
+        res = mlkit.train_model(goods, bads)
     else:
         res = {}
     return jsonify(res)
