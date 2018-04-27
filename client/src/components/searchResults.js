@@ -34,7 +34,8 @@ const SearchResults = props => {
                   <p>
                     <strong>{hit.title}</strong>
                     <br/>
-                    {hit.overview}
+                    {/* {hit.overview} */}
+                    {Math.abs(Math.round(hit.score * 1000) / 1000)}
                   </p>
                 </div>
                 <div className="content">
@@ -99,11 +100,6 @@ const SearchResults = props => {
               <div className="column actionColumn">
                 <div class="tile is-ancestor">
                   <div class="tile is-vertical is-parent">
-                    <div class="tile is-child">
-                      <p class="title">
-                        {Math.round(hit.score * 1000) / 1000}
-                      </p>
-                    </div>
                     <div class="tile is-child">
                       <p class="title">
                         <a onClick={() => handleThumbsUp(hit)}>

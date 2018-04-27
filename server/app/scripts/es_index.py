@@ -50,7 +50,7 @@ def clean_row(row):
     'genres': convert_strings(row.get('genres')),
     'overview': convert_strings(row.get('overview')),
     'status': convert_strings(row.get('status')),
-    'spoken_languages': convert_strings(row.get('release_date')),
+    'spoken_languages': convert_strings(row.get('spoken_languages')),
     'release_date': convert_strings(row.get('release_date')),
 
     'vote_average': convert_numbers(row.get('vote_average')),
@@ -107,6 +107,9 @@ df = pd.read_csv('data/AllMoviesDetailsCleaned.csv',delimiter=';')
 data = df.to_dict('records')
 data = [clean_row(x) for x in data]
 
+non_numeric = pd.DataFrame(data)
+non_numeric = non_numeric[non_numeric.columns[~pd.Series(non_numeric.columns).isin(pd.Series(MODEL_COLUMNS))]]
+
 to_scale = pd.DataFrame(data)[MODEL_COLUMNS]
 to_scale = to_scale.apply(lambda x: x.fillna(x.median()),axis=0)
 
@@ -115,9 +118,7 @@ ans = scaler.fit_transform(to_scale)
 scaled_df = pd.DataFrame(ans)
 scaled_df.columns = ['scaled_{}'.format(x) for x in MODEL_COLUMNS]
 
-data_df = pd.DataFrame(data)
-
-master = pd.concat([data_df, scaled_df], axis=1)
+master = pd.concat([non_numeric, to_scale, scaled_df], axis=1)
 master = master.fillna('')
 master = master.to_dict('records')
 

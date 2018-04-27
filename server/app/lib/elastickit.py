@@ -65,7 +65,7 @@ def clean_hits(hits):
         out.append(row)
     return out
 
-def basic_search(query, search_filters, search_from):
+def basic_search(query, search_filters, search_from, filter_ids):
     '''
         search_from=0
         search_filters=[
@@ -94,7 +94,12 @@ def basic_search(query, search_filters, search_from):
         "size" : 10,
         "query": {
             "bool": {
-                "must": must_terms
+                "must": must_terms,
+                "must_not": [{
+                    'ids': {
+                        'values':filter_ids
+                    }
+                }]
             }
         }
         # "aggs" : {
@@ -119,7 +124,7 @@ def basic_search(query, search_filters, search_from):
     # results['aggs'] = ans.get('aggregations',{})
     return results
 
-def function_query(query, search_filters, search_from, logit_params):
+def function_query(query, search_filters, search_from, logit_params, _type, filter_ids):
     '''
         search_from=0
         search_filters=[
@@ -143,7 +148,6 @@ def function_query(query, search_filters, search_from, logit_params):
     else:
         must_terms = search_filters_clean + [{"bool": {"should": should_terms}}]
 
-    # _score/10000 +
     bdy = {
         "from" : search_from,
         "size" : 10,
@@ -151,33 +155,37 @@ def function_query(query, search_filters, search_from, logit_params):
             "function_score": {
                 "query": {
                     "bool": {
-                        "must": must_terms
+                        "must_not": [{
+                            'ids': {
+                                'values':filter_ids
+                            }
+                        }]
                     }
                 },
                 "script_score": {
                     "script": {
                     "lang": "expression",
                     "source": '''
-                        1/(1+ exp(-(
+                        {}1/(1+ exp(-(
                             intercept +
-                            doc['scaled_vote_average'].value * scaled_vote_average +
-                            doc['scaled_vote_count'].value*scaled_vote_count +
-                            doc['scaled_revenue'].value*scaled_revenue +
-                            doc['scaled_runtime'].value*scaled_runtime +
-                            doc['scaled_budget'].value*scaled_budget +
-                            doc['scaled_popularity'].value*scaled_popularity +
-                            doc['scaled_release_year'].value*scaled_release_year
+                            doc['vote_average'].value * vote_average +
+                            doc['vote_count'].value * vote_count +
+                            doc['revenue'].value * revenue +
+                            doc['runtime'].value * runtime +
+                            doc['budget'].value * budget +
+                            doc['popularity'].value * popularity +
+                            doc['release_year'].value * release_year
                         )))
-                    ''',
+                    '''.format('-' if _type == 'worst' else '+'),
                     "params": {
                         "intercept": logit_params.get('intercept'),
-                        "scaled_vote_average": logit_params.get('coef',{}).get('scaled_vote_average'),
-                        "scaled_vote_count": logit_params.get('coef',{}).get('scaled_vote_count'),
-                        "scaled_revenue": logit_params.get('coef',{}).get('scaled_revenue'),
-                        "scaled_runtime": logit_params.get('coef',{}).get('scaled_runtime'),
-                        "scaled_budget": logit_params.get('coef',{}).get('scaled_budget'),
-                        "scaled_popularity": logit_params.get('coef',{}).get('scaled_popularity'),
-                        "scaled_release_year": logit_params.get('coef',{}).get('scaled_release_year'),
+                        "vote_average": logit_params.get('coef',{}).get('vote_average'),
+                        "vote_count": logit_params.get('coef',{}).get('vote_count'),
+                        "revenue": logit_params.get('coef',{}).get('revenue'),
+                        "runtime": logit_params.get('coef',{}).get('runtime'),
+                        "budget": logit_params.get('coef',{}).get('budget'),
+                        "popularity": logit_params.get('coef',{}).get('popularity'),
+                        "release_year": logit_params.get('coef',{}).get('release_year'),
                     }
                     # "source": "doc['release_year'].value"
                   }
@@ -199,3 +207,47 @@ def function_query(query, search_filters, search_from, logit_params):
     results['num_results'] = ans.get('hits',{}).get('total','')
     # results['aggs'] = ans.get('aggregations',{})
     return results
+
+
+    # _score/10000 +
+    # bdy = {
+    #     "from" : search_from,
+    #     "size" : 10,
+    #     "query": {
+    #         "function_score": {
+    #             "query": {
+    #                 "bool": {
+    #                     "must": must_terms
+    #                 }
+    #             },
+    #             "script_score": {
+    #                 "script": {
+    #                 "lang": "expression",
+    #                 "source": '''
+    #                     1/(1+ exp(-(
+    #                         intercept +
+    #                         doc['scaled_vote_average'].value * scaled_vote_average +
+    #                         doc['scaled_vote_count'].value*scaled_vote_count +
+    #                         doc['scaled_revenue'].value*scaled_revenue +
+    #                         doc['scaled_runtime'].value*scaled_runtime +
+    #                         doc['scaled_budget'].value*scaled_budget +
+    #                         doc['scaled_popularity'].value*scaled_popularity +
+    #                         doc['scaled_release_year'].value*scaled_release_year
+    #                     )))
+    #                 ''',
+    #                 "params": {
+    #                     "intercept": logit_params.get('intercept'),
+    #                     "scaled_vote_average": logit_params.get('coef',{}).get('scaled_vote_average'),
+    #                     "scaled_vote_count": logit_params.get('coef',{}).get('scaled_vote_count'),
+    #                     "scaled_revenue": logit_params.get('coef',{}).get('scaled_revenue'),
+    #                     "scaled_runtime": logit_params.get('coef',{}).get('scaled_runtime'),
+    #                     "scaled_budget": logit_params.get('coef',{}).get('scaled_budget'),
+    #                     "scaled_popularity": logit_params.get('coef',{}).get('scaled_popularity'),
+    #                     "scaled_release_year": logit_params.get('coef',{}).get('scaled_release_year'),
+    #                 }
+    #                 # "source": "doc['release_year'].value"
+    #               }
+    #             }
+    #         }
+    #     }
+    # }

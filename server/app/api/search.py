@@ -27,13 +27,41 @@ def basic_search():
     post_data = request.get_json()
     query = post_data.get('query')
     logit_params = post_data.get('logit_params')
-    print(post_data, file=sys.stderr)
-    if logit_params == {}:
-        res = elastickit.basic_search(query, [], 0)
-    else:
-        res = elastickit.function_query(query, [], 0, logit_params)
-        records = mlkit.score_records(res['results'])
-        res['results'] = records
+    thumb_ups = [x['id'] for x in post_data.get('thumb_ups')]
+    thumb_downs = [x['id'] for x in post_data.get('thumb_downs')]
+    filter_ids = thumb_ups + thumb_downs
+
+    res = elastickit.basic_search(query, [], 0, filter_ids)
+    return jsonify(res)
+
+@search_blueprint.route('/search/worst', methods=['POST'])
+def worst_search():
+    post_data = request.get_json()
+    query = post_data.get('query')
+    logit_params = post_data.get('logit_params')
+    thumb_ups = [x['id'] for x in post_data.get('thumb_ups')]
+    thumb_downs = [x['id'] for x in post_data.get('thumb_downs')]
+    filter_ids = thumb_ups + thumb_downs
+    # print(post_data, file=sys.stderr)
+
+    res = elastickit.function_query(query, [], 0, logit_params, 'worst', filter_ids)
+    # records = mlkit.score_records(res['results'])
+    # res['results'] = records
+    return jsonify(res)
+
+@search_blueprint.route('/search/best', methods=['POST'])
+def best_search():
+    post_data = request.get_json()
+    query = post_data.get('query')
+    logit_params = post_data.get('logit_params')
+    thumb_ups = [x['id'] for x in post_data.get('thumb_ups')]
+    thumb_downs = [x['id'] for x in post_data.get('thumb_downs')]
+    filter_ids = thumb_ups + thumb_downs
+    # print(post_data, file=sys.stderr)
+
+    res = elastickit.function_query(query, [], 0, logit_params, 'best', filter_ids)
+    # records = mlkit.score_records(res['results'])
+    # res['results'] = records
     return jsonify(res)
 
 @search_blueprint.route('/search/train', methods=['POST'])

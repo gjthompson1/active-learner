@@ -22,26 +22,35 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.executeSearch();
+    this.executeSearch('basic');
   }
 
   handleSearchClick = (event) => {
-    this.executeSearch();
+    this.executeSearch('basic');
+  }
+
+  handleWorstClick = (event) => {
+    this.executeSearch('worst');
+  }
+
+  handleBestClick = (event) => {
+    this.executeSearch('best');
   }
 
   handleKeyPress = (event) => {
     if ( event.key === 'Enter' ) {
-      this.executeSearch();
+      this.executeSearch('basic');
     }
   }
 
-  executeSearch = () => {
-    const url = `${process.env.REACT_APP_SERVER_URL}/search/basic`
+  executeSearch = (searchType) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/search/${searchType}`
     let data = {
       'query': this.state.query,
       'logit_params': this.state.logitParams,
+      'thumb_ups': this.state.thumbUps,
+      'thumb_downs': this.state.thumbDowns,
     };
-    // this.setState({'isSearchLoading':true})
     axios.post(url, data)
     .then((res) => {
       console.log(res);
@@ -68,7 +77,9 @@ class App extends Component {
     })
     console.log(this.state);
     this.trainModel();
-    this.executeSearch();
+    // if (!this.isEmpty(this.state.logitParams)) {
+    this.executeSearch('basic');
+    // }
   }
 
   handleThumbsUp = (hit) => {
@@ -78,7 +89,9 @@ class App extends Component {
       thumbUps: thumbUps
     })
     this.trainModel();
-    this.executeSearch();
+    // if (!this.isEmpty(this.state.logitParams)) {
+    this.executeSearch('basic');
+    // }
   }
 
   trainModel = () => {
@@ -97,6 +110,32 @@ class App extends Component {
     .catch((err) => {
       console.log(err);
     })
+  }
+
+
+  isEmpty = (obj) => {
+
+      // null and undefined are "empty"
+      if (obj == null) return true;
+
+      // Assume if it has a length property with a non-zero value
+      // that that property is correct.
+      if (obj.length > 0)    return false;
+      if (obj.length === 0)  return true;
+
+      // If it isn't an object at this point
+      // it is empty, but it can't be anything *but* empty
+      // Is it empty?  Depends on your application.
+      if (typeof obj !== "object") return true;
+
+      // Otherwise, does it have any properties of its own?
+      // Note that this doesn't handle
+      // toString and valueOf enumeration bugs in IE < 9
+      for (var key in obj) {
+          if (hasOwnProperty.call(obj, key)) return false;
+      }
+
+      return true;
   }
 
   render() {
@@ -129,6 +168,26 @@ class App extends Component {
                     Search
                   </a>
                 </div>
+                { this.isEmpty(this.state.logitParams) != true &&
+                  <div className="control">
+                    <a
+                      onClick={(e) => this.handleWorstClick(e)}
+                      className="button is-danger"
+                    >
+                      Worst
+                    </a>
+                  </div>
+                }
+                { this.isEmpty(this.state.logitParams) != true &&
+                  <div className="control">
+                    <a
+                      onClick={(e) => this.handleBestClick(e)}
+                      className="button is-success"
+                    >
+                      Best
+                    </a>
+                  </div>
+                }
               </div>
             </div>
           </div>
