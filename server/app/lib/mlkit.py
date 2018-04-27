@@ -36,7 +36,7 @@ def train_model(goods, bads):
 
     df = pd.concat([good_df,bad_df],axis=0)
     # df = df.apply(lambda x: x.fillna(x.mean()),axis=0)
-    print(df, file=sys.stderr)
+    # print(df, file=sys.stderr)
     clf.fit(df[MODEL_COLUMNS], df['is_good'])
 
     # [{'importance':x,'variable':y} for x, y in zip(logit_model.steps[1][1].coef_[0],MODEL_COLUMNS)]

@@ -78,7 +78,7 @@ class App extends Component {
     console.log(this.state);
     this.trainModel();
     // if (!this.isEmpty(this.state.logitParams)) {
-    this.executeSearch('basic');
+    // this.executeSearch('basic');
     // }
   }
 
@@ -90,7 +90,7 @@ class App extends Component {
     })
     this.trainModel();
     // if (!this.isEmpty(this.state.logitParams)) {
-    this.executeSearch('basic');
+    // this.executeSearch('basic');
     // }
   }
 
